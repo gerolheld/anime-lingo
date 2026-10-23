@@ -24,15 +24,23 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+      - name: FFmpeg (a few tests run the real ffmpeg/ffprobe on tiny files)
+        shell: bash
+        run: |
+          if [ "$RUNNER_OS" = "Linux" ]; then sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg; else choco install ffmpeg -y --no-progress; fi
+          ffmpeg -version | head -1; ffprobe -version | head -1
       - run: npm ci
       - name: Unit and integration tests (stub processes, no models, no GPU)
+        # Required on Linux. On Windows a failure is reported without blocking the package build,
+        # so the installer is still produced while the Windows-specific tests are being brought up.
+        continue-on-error: ${{ matrix.os == 'windows-latest' }}
         run: npm test
       - name: Browser UI tests (static Chromium, fake IPC)
         # Required on Linux. On Windows they run too, but a failure is reported without blocking the package build
         # until the first green run shows the baseline.
         continue-on-error: ${{ matrix.os == 'windows-latest' }}
         run: |
-          npx playwright install chromium
+          npx playwright install --with-deps chromium
           npm run test:ui
           npm run test:folders:ui
           npm run test:enhance:ui
@@ -67,3 +75,43 @@ jobs:
         with:
           name: anime-lingo-linux-unpacked
           path: dist/desktop/linux-unpacked
+
+  release:
+    # A tag such as v0.1.0 publishes the Linux and Windows files as a GitHub Release.
+    needs: build
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: anime-lingo-Linux
+          path: files
+      - uses: actions/download-artifact@v4
+        with:
+          name: anime-lingo-Windows
+          path: files
+      - name: Checksums and release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          cd files
+          rm -f SHA256SUMS.txt
+          sha256sum * > SHA256SUMS.txt
+          cat SHA256SUMS.txt
+          cat > ../notes.md <<'NOTES'
+          Local anime subtitles (Qwen3-ASR + ForcedAligner), translation (Hy-MT2 through the embedded llama.cpp), word learning and gentle video enhancement. Every model runs on your computer.
+
+          **Files**
+          - `*-linux-x86_64.AppImage` — Linux x64: `chmod +x` and run.
+          - `*-win-x64.exe` — Windows installer (NSIS). `*-portable-x64.exe` — Windows, no installation.
+          - `SHA256SUMS.txt` — checksums.
+
+          **Notes**
+          - The models are not inside the files: on first start the app downloads what it needs (about 20 GB free disk space, internet required).
+          - Windows builds are **not code-signed**: SmartScreen shows a warning ("More info" → "Run anyway").
+          - Windows builds come from CI and have not been run on a real Windows machine yet; Linux has been tested on Intel Arc only (NVIDIA and AMD paths are covered by tests with stand-ins, not by real runs).
+          NOTES
+          gh release create "$GITHUB_REF_NAME" * --repo "$GITHUB_REPOSITORY" --title "Anime Lingo ${GITHUB_REF_NAME#v}" --notes-file ../notes.md --prerelease
