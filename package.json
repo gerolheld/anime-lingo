@@ -5,7 +5,7 @@
   "description": "Anime Lingo: local subtitles, translation and gentle video restoration for Windows and Linux",
   "license": "MIT",
   "scripts": {
-    "test": "node --test tests/core.test.cjs tests/desktop.test.cjs tests/import.test.cjs tests/qwen.test.cjs tests/enhance.test.cjs tests/reading.test.cjs tests/reading-renderer.test.cjs tests/reference-ui.test.cjs tests/folders.test.cjs tests/enhance-safety.test.cjs tests/store.test.cjs tests/process.test.cjs tests/downloader.test.cjs tests/platform.test.cjs tests/llama.test.cjs tests/components.test.cjs tests/video-gpu.test.cjs tests/import-fixes.test.cjs tests/i18n.test.cjs tests/library-root.test.cjs tests/theme.test.cjs",
+    "test": "node --test --test-timeout=120000 tests/core.test.cjs tests/desktop.test.cjs tests/import.test.cjs tests/qwen.test.cjs tests/enhance.test.cjs tests/reading.test.cjs tests/reading-renderer.test.cjs tests/reference-ui.test.cjs tests/folders.test.cjs tests/enhance-safety.test.cjs tests/store.test.cjs tests/process.test.cjs tests/downloader.test.cjs tests/platform.test.cjs tests/llama.test.cjs tests/components.test.cjs tests/video-gpu.test.cjs tests/import-fixes.test.cjs tests/i18n.test.cjs tests/library-root.test.cjs tests/theme.test.cjs",
     "build": "node tools/build-desktop-source.mjs",
     "start": "electron .",
     "desktop": "electron .",

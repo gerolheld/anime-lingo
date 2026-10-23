@@ -7,8 +7,13 @@ on:
   pull_request:
   workflow_dispatch:
 
+concurrency:
+  group: build-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build:
+    timeout-minutes: 40
     name: ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     strategy:
@@ -77,6 +82,7 @@ jobs:
           path: dist/desktop/linux-unpacked
 
   release:
+    timeout-minutes: 15
     # A tag such as v0.1.0 publishes the Linux and Windows files as a GitHub Release.
     needs: build
     if: startsWith(github.ref, 'refs/tags/v')
