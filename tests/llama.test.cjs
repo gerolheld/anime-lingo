@@ -10,7 +10,10 @@ const {LlamaServer,assetKeys,gpuLayers,chooseQuant,scanImport,importModel}=requi
 const {Backend}=require('../desktop/backend.cjs');
 const gpu=require('../desktop/gpu.cjs');
 const FAKE=path.join(__dirname,'fake-llama-server.cjs');
-const temp=async t=>{const d=await fs.mkdtemp(path.join(os.tmpdir(),'lingo-llama-'));t.after(()=>fs.rm(d,{recursive:true,force:true}));return d;};
+// Per test: stop every server first, then remove the folders (Windows refuses to delete a folder a process still uses).
+const cleanups=new WeakMap();
+const track=t=>{if(!cleanups.has(t)){const state={stops:[],dirs:[]};cleanups.set(t,state);t.after(async()=>{for(const stop of state.stops)await stop().catch(()=>{});for(const d of state.dirs)await fs.rm(d,{recursive:true,force:true,maxRetries:20,retryDelay:150}).catch(()=>{});});}return cleanups.get(t);};
+const temp=async t=>{const d=await fs.mkdtemp(path.join(os.tmpdir(),'lingo-llama-'));track(t).dirs.push(d);return d;};
 const alive=pid=>{try{process.kill(pid,0);return true;}catch{return false;}};
 const until=async(check,ms=8000)=>{const end=Date.now()+ms;while(Date.now()<end){if(await check())return true;await new Promise(r=>setTimeout(r,40));}return false;};
 const SIZE=1000;
@@ -27,7 +30,7 @@ async function installed(t,{mode='ok',settings={},backend='vulkan',quant='Q4_K_M
   const s={gpu:true,translationDevice:'auto',translationQuant:'auto',...settings};
   const caps=async()=>gpu.capabilities([{name:'Test GPU',vendor:'1002',maker:'AMD',vramTotal:8*1024**3,vramUsed:0}],{platform:process.platform,exists:()=>true});
   const server=new LlamaServer({settings:()=>s,runtime,manifest,spawnProcess,capabilities:caps,readyTimeout:15000});
-  t.after(()=>server.stop());
+  track(t).stops.push(()=>server.stop());
   return {server,spawns,runtime,s};
 }
 

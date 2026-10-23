@@ -42,7 +42,7 @@ test('the generated *.themed.css twins are up to date and every colour in them i
   const {render,SHEETS}=await import('../tools/build-theme-css.mjs');
   for(const name of SHEETS){
     const expected=await render(name),actual=fs.readFileSync(path.join(__dirname,`../desktop/ui/${name}.themed.css`),'utf8');
-    assert.ok(actual===expected,`${name}.themed.css is stale: run node tools/build-theme-css.mjs`);
+    assert.ok(actual.replace(/\r\n/g,'\n')===expected.replace(/\r\n/g,'\n'),`${name}.themed.css is stale: run node tools/build-theme-css.mjs`);
     // After removing the relative-colour wrappers, no raw colour may remain in a declaration value.
     const stripped=actual.replace(/hsl\(from (?:#[0-9a-fA-F]{3,8}|rgba?\([^)]*\)) calc\(h/g,'hsl(from X calc(h');
     for(const m of stripped.matchAll(/([a-zA-Z-]+)\s*:\s*([^;{}]*)(?=[;}])/g)){

@@ -22,7 +22,7 @@ test('old enhancement settings migrate to the streaming worker without changing 
   const episode={id:'saved',title:'My anime',state:'ready',cues:[{start:1,end:2,text:'Hello.',ru:'Привет.'}]};
   await fs.writeFile(path.join(root,'library.json'),JSON.stringify({settings:{enhanceBinary:'/local/realesrgan-ncnn-vulkan',enhanceTile:128},episodes:[episode],words:[{id:'word',word:'hello'}]}));
   const b=await new Backend(root,{manageModels:false}).init();
-  assert.equal(b.db.settings.enhanceBinary,'/local/anime-lingo-enhance');assert.equal(b.db.settings.enhanceTile,0);
+  assert.equal(b.db.settings.enhanceBinary,path.join('/local','anime-lingo-enhance'));assert.equal(b.db.settings.enhanceTile,0);
   assert.deepEqual(b.db.episodes,[episode]);assert.equal(b.db.words[0].word,'hello');
   await b.configure({enhanceTile:512});await b.close();
   const again=await new Backend(root,{manageModels:false}).init();assert.equal(again.db.settings.enhanceTile,512);await again.close();

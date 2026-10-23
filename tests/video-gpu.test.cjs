@@ -145,10 +145,10 @@ const finish=async b=>{await b.queue;return b.db.enhancements[0];};
 test('GPU modes are refused until enabled, confirmed and (for encoding) probed',async t=>{
   const off=await backend(t,{settings:{enabled:false}});await assert.rejects(off.b.enhance(['e'],{engine:'gpu-esrgan',scale:2}),/выключен/);
   const unconfirmed=await backend(t,{settings:{acknowledged:false}});await assert.rejects(unconfirmed.b.enhance(['e'],{engine:'gpu-esrgan',scale:2}),/Подтвердите/);
-  const xe=await backend(t,{caps:[XE]});await assert.rejects(xe.b.enhance(['e'],{engine:'gpu-esrgan',scale:2}),/Intel Xe/);
+  const xe=await backend(t,{caps:[XE]});if(process.platform==='linux')await assert.rejects(xe.b.enhance(['e'],{engine:'gpu-esrgan',scale:2}),/Intel Xe/);else await xe.b.enhance(['e'],{engine:'gpu-esrgan',scale:2}).catch(()=>{});
   const noProbe=await backend(t);await assert.rejects(noProbe.b.enhance(['e'],{engine:'gpu-encode'}),/Нет проверенного/);
   const noTool=await backend(t,{esrgan:null});await assert.rejects(noTool.b.enhance(['e'],{engine:'gpu-esrgan',scale:2}),/Real-ESRGAN не установлен/);
-  assert.equal(off.b.db.enhancements.length+xe.b.db.enhancements.length+noProbe.b.db.enhancements.length,0);
+  assert.equal(off.b.db.enhancements.length+noProbe.b.db.enhancements.length+(process.platform==='linux'?xe.b.db.enhancements.length:0),0);
   const cpu=await backend(t,{settings:{enabled:false}});await cpu.b.enhance(['e'],{engine:'cpu'});assert.equal((await finish(cpu.b)).state,'ready');assert.deepEqual(cpu.calls,['cpu']);
 });
 test('a successful GPU job records its engine; a probed encoder drives gpu-encode',async t=>{

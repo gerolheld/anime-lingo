@@ -28,6 +28,7 @@ try{
  const context=await browser.newContext({locale:'ru-RU',viewport:{width:1672,height:941}});await context.route('**/*',r=>r.request().url().startsWith(base)?r.continue():r.abort());
  await context.exposeBinding('__ipc',async(_,method,data={})=>{calls.push({method,data});if(method==='settings'){settings={...settings,...data};return {value:settings};}
    return {value:method==='snapshot'?{settings,episodes:[],folders:[],words:[],history:[],enhancements:[],components:{},tools:{ready:true},modelState:{phase:'idle',label:'x'},enhancePolicy:{isolation:{label:'x'}},live:[]}:{ok:true}};});
+ await context.addInitScript(()=>{try{localStorage.setItem('lingo-lang','ru');}catch{}});
  await context.addInitScript(()=>{let l;window.__emit=d=>l?.({type:'state',data:d});window.lingo={subscribe:fn=>{l=fn;},call:(m,d)=>window.__ipc(m,d)};});
  const page=await context.newPage();const errors=[];page.on('pageerror',e=>errors.push(e.stack));
  await page.goto(base+'/desktop/ui/index.html');await page.waitForFunction(()=>S.settings&&S.settings.firstRunDone===true);
