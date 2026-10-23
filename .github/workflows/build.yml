@@ -1,0 +1,69 @@
+name: build
+
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: npm ci
+      - name: Unit and integration tests (stub processes, no models, no GPU)
+        run: npm test
+      - name: Browser UI tests (static Chromium, fake IPC)
+        # Required on Linux. On Windows they run too, but a failure is reported without blocking the package build
+        # until the first green run shows the baseline.
+        continue-on-error: ${{ matrix.os == 'windows-latest' }}
+        run: |
+          npx playwright install chromium
+          npm run test:ui
+          npm run test:folders:ui
+          npm run test:enhance:ui
+          npm run test:models:ui
+          npm run test:library:ui
+          npm run test:theme:ui
+          npm run test:ui:en
+      - name: Package (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          npm run desktop:pack
+          npm run desktop:appimage
+      - name: Package (Windows)
+        if: runner.os == 'Windows'
+        run: npm run desktop:pack:win
+      - name: Checksums
+        shell: bash
+        run: |
+          cd dist/desktop
+          for f in *.AppImage *.exe; do [ -f "$f" ] && sha256sum "$f" >> SHA256SUMS.txt || true; done
+          cat SHA256SUMS.txt || true
+      - uses: actions/upload-artifact@v4
+        with:
+          name: anime-lingo-${{ runner.os }}
+          if-no-files-found: error
+          path: |
+            dist/desktop/*.AppImage
+            dist/desktop/*.exe
+            dist/desktop/SHA256SUMS.txt
+      - uses: actions/upload-artifact@v4
+        if: runner.os == 'Linux'
+        with:
+          name: anime-lingo-linux-unpacked
+          path: dist/desktop/linux-unpacked

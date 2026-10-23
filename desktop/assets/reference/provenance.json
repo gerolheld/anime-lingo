@@ -1,0 +1,303 @@
+{
+  "source": "User-supplied reference screenshots",
+  "generatedArtwork": false,
+  "assets": [
+    {
+      "asset": "logo.png",
+      "reference": "Изображение ChatGPT 22 окт. 2026 г., 21_58_56-6.png",
+      "crop": [
+        31,
+        38,
+        62,
+        63
+      ],
+      "referenceSha256": "34d29143ecfe47b4b4e1905782faf07f1117df9f475f8925e70fd0622ed0ff34"
+    },
+    {
+      "asset": "settings-note.png",
+      "reference": "Изображение ChatGPT 22 окт. 2026 г., 21_58_56-6.png",
+      "crop": [
+        850,
+        167,
+        254,
+        77
+      ],
+      "referenceSha256": "34d29143ecfe47b4b4e1905782faf07f1117df9f475f8925e70fd0622ed0ff34"
+    },
+    {
+      "asset": "words-header.png",
+      "reference": "Изображение ChatGPT 22 окт. 2026 г., 21_58_54-4.png",
+      "crop": [
+        1040,
+        0,
+        170,
+        155
+      ],
+      "referenceSha256": "426dedb347fe6e96e583171a5ddb84d27078683f45eae1fd381096886e28d615"
+    },
+    {
+      "asset": "panel-art.png",
+      "reference": "Изображение ChatGPT 22 окт. 2026 г., 21_58_53-3.png",
+      "crop": [
+        810,
+        202,
+        180,
+        76
+      ],
+      "referenceSha256": "50588816aa0c220860de25ec7ca37cc68bf0106cd0cc8690d28bee31b4928408"
+    },
+    {
+      "asset": "system-orb.png",
+      "reference": "Изображение ChatGPT 22 окт. 2026 г., 21_58_56-7.png",
+      "crop": [
+        350,
+        155,
+        178,
+        178
+      ],
+      "referenceSha256": "977c675955519abc6950aa8329ac89af52dacafd0184c85eba63e5f0955de743"
+    },
+    {
+      "asset": "qwen-symbol.png",
+      "reference": "Изображение ChatGPT 22 окт. 2026 г., 21_58_53-3.png",
+      "crop": [
+        1241,
+        259,
+        70,
+        70
+      ],
+      "referenceSha256": "50588816aa0c220860de25ec7ca37cc68bf0106cd0cc8690d28bee31b4928408"
+    },
+    {
+      "asset": "aligner-symbol.png",
+      "reference": "Изображение ChatGPT 22 окт. 2026 г., 21_58_53-3.png",
+      "crop": [
+        1241,
+        377,
+        70,
+        73
+      ],
+      "referenceSha256": "50588816aa0c220860de25ec7ca37cc68bf0106cd0cc8690d28bee31b4928408"
+    },
+    {
+      "asset": "translation-symbol.png",
+      "reference": "Изображение ChatGPT 22 окт. 2026 г., 21_58_53-3.png",
+      "crop": [
+        1241,
+        499,
+        70,
+        73
+      ],
+      "referenceSha256": "50588816aa0c220860de25ec7ca37cc68bf0106cd0cc8690d28bee31b4928408"
+    },
+    {
+      "asset": "enhance-symbol.png",
+      "reference": "Изображение ChatGPT 22 окт. 2026 г., 21_58_53-3.png",
+      "crop": [
+        1241,
+        619,
+        70,
+        74
+      ],
+      "referenceSha256": "50588816aa0c220860de25ec7ca37cc68bf0106cd0cc8690d28bee31b4928408"
+    },
+    {
+      "asset": "word-reactor.png",
+      "reference": "Изображение ChatGPT 22 окт. 2026 г., 21_58_54-4.png",
+      "crop": [
+        713,
+        383,
+        85,
+        71
+      ],
+      "referenceSha256": "426dedb347fe6e96e583171a5ddb84d27078683f45eae1fd381096886e28d615"
+    },
+    {
+      "asset": "word-artificial.png",
+      "reference": "Изображение ChatGPT 22 окт. 2026 г., 21_58_54-4.png",
+      "crop": [
+        713,
+        476,
+        85,
+        73
+      ],
+      "referenceSha256": "426dedb347fe6e96e583171a5ddb84d27078683f45eae1fd381096886e28d615"
+    },
+    {
+      "asset": "word-suitable.png",
+      "reference": "Изображение ChatGPT 22 окт. 2026 г., 21_58_54-4.png",
+      "crop": [
+        713,
+        576,
+        85,
+        73
+      ],
+      "referenceSha256": "426dedb347fe6e96e583171a5ddb84d27078683f45eae1fd381096886e28d615"
+    },
+    {
+      "asset": "word-select.png",
+      "reference": "Изображение ChatGPT 22 окт. 2026 г., 21_58_54-4.png",
+      "crop": [
+        713,
+        673,
+        85,
+        73
+      ],
+      "referenceSha256": "426dedb347fe6e96e583171a5ddb84d27078683f45eae1fd381096886e28d615"
+    },
+    {
+      "asset": "word-circuit.png",
+      "reference": "Изображение ChatGPT 22 окт. 2026 г., 21_58_54-4.png",
+      "crop": [
+        713,
+        769,
+        85,
+        73
+      ],
+      "referenceSha256": "426dedb347fe6e96e583171a5ddb84d27078683f45eae1fd381096886e28d615"
+    },
+    {
+      "asset": "word-homunculi.png",
+      "reference": "Изображение ChatGPT 22 окт. 2026 г., 21_58_54-4.png",
+      "crop": [
+        713,
+        856,
+        85,
+        73
+      ],
+      "referenceSha256": "426dedb347fe6e96e583171a5ddb84d27078683f45eae1fd381096886e28d615"
+    },
+    {
+      "asset": "sidebar-art.png",
+      "reference": "Изображение ChatGPT 22 окт. 2026 г., 21_58_56-6.png",
+      "crop": [
+        0,
+        406,
+        294,
+        398
+      ],
+      "referenceSha256": "34d29143ecfe47b4b4e1905782faf07f1117df9f475f8925e70fd0622ed0ff34"
+    },
+    {
+      "asset": "sidebar-history.png",
+      "reference": "Изображение ChatGPT 22 окт. 2026 г., 21_58_55-5.png",
+      "crop": [
+        0,
+        407,
+        280,
+        398
+      ],
+      "referenceSha256": "0cdfd2ac56d63e9ca69e65f8db72bdc9bde52a5467e37816f15fa83689aa03fd"
+    },
+    {
+      "asset": "header-room.png",
+      "reference": "Изображение ChatGPT 22 окт. 2026 г., 21_58_56-6.png",
+      "crop": [
+        1043,
+        0,
+        629,
+        138
+      ],
+      "referenceSha256": "34d29143ecfe47b4b4e1905782faf07f1117df9f475f8925e70fd0622ed0ff34"
+    },
+    {
+      "asset": "room-books.png",
+      "reference": "Изображение ChatGPT 22 окт. 2026 г., 21_58_56-6.png",
+      "crop": [
+        1043,
+        38,
+        629,
+        100
+      ],
+      "referenceSha256": "34d29143ecfe47b4b4e1905782faf07f1117df9f475f8925e70fd0622ed0ff34"
+    },
+    {
+      "asset": "room-footer.png",
+      "reference": "Изображение ChatGPT 22 окт. 2026 г., 21_58_52-2.png",
+      "crop": [
+        295,
+        770,
+        1377,
+        171
+      ],
+      "referenceSha256": "72a1577df5e7abe1c2df9d731125e730022fea48c7ef59416e258d8d29fa456e"
+    },
+    {
+      "asset": "library-room.png",
+      "reference": "Изображение ChatGPT 22 окт. 2026 г., 21_58_52-2.png",
+      "crop": [
+        1322,
+        137,
+        350,
+        400
+      ],
+      "referenceSha256": "72a1577df5e7abe1c2df9d731125e730022fea48c7ef59416e258d8d29fa456e"
+    },
+    {
+      "asset": "diagnostics-girl.png",
+      "reference": "Изображение ChatGPT 22 окт. 2026 г., 21_58_56-7.png",
+      "crop": [
+        1361,
+        137,
+        283,
+        205
+      ],
+      "referenceSha256": "977c675955519abc6950aa8329ac89af52dacafd0184c85eba63e5f0955de743"
+    },
+    {
+      "asset": "fate-cover.png",
+      "reference": "Изображение ChatGPT 22 окт. 2026 г., 21_58_53-3.png",
+      "crop": [
+        412,
+        294,
+        191,
+        87
+      ],
+      "referenceSha256": "50588816aa0c220860de25ec7ca37cc68bf0106cd0cc8690d28bee31b4928408"
+    },
+    {
+      "asset": "fate-library-cover.png",
+      "reference": "Изображение ChatGPT 22 окт. 2026 г., 21_58_52-2.png",
+      "crop": [
+        340,
+        247,
+        495,
+        253
+      ],
+      "referenceSha256": "72a1577df5e7abe1c2df9d731125e730022fea48c7ef59416e258d8d29fa456e"
+    },
+    {
+      "asset": "scene.png",
+      "reference": "Изображение ChatGPT 22 окт. 2026 г., 21_58_52-1.png",
+      "crop": [
+        321,
+        144,
+        880,
+        248
+      ],
+      "referenceSha256": "7ba025a6b0b804a9fa2a3fe3077f342aa2d5750733854cb639d9eaeb18b36cf7"
+    },
+    {
+      "asset": "steins-cover.png",
+      "reference": "Изображение ChatGPT 22 окт. 2026 г., 21_58_52-2.png",
+      "crop": [
+        340,
+        557,
+        190,
+        126
+      ],
+      "referenceSha256": "72a1577df5e7abe1c2df9d731125e730022fea48c7ef59416e258d8d29fa456e"
+    },
+    {
+      "asset": "rezero-cover.png",
+      "reference": "Изображение ChatGPT 22 окт. 2026 г., 21_58_52-2.png",
+      "crop": [
+        965,
+        556,
+        192,
+        126
+      ],
+      "referenceSha256": "72a1577df5e7abe1c2df9d731125e730022fea48c7ef59416e258d8d29fa456e"
+    }
+  ]
+}

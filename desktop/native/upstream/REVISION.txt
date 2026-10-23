@@ -1,0 +1,4 @@
+https://github.com/xinntao/Real-ESRGAN-ncnn-vulkan
+37026f49824c5cf84062e7c6a5dd71445dcf610f
+Upstream inference implementation and shaders; see LICENSE.
+Local change: constructor accepts explicit FP16 arithmetic and Winograd options, selected by the streaming worker; redundant per-tile progress is suppressed. The neural model weights are unchanged.

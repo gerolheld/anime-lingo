@@ -1,0 +1,122 @@
+{
+  "name": "anime-lingo",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Anime Lingo: local subtitles, translation and gentle video restoration for Windows and Linux",
+  "license": "MIT",
+  "scripts": {
+    "test": "node --test tests/core.test.cjs tests/desktop.test.cjs tests/import.test.cjs tests/qwen.test.cjs tests/enhance.test.cjs tests/reading.test.cjs tests/reading-renderer.test.cjs tests/reference-ui.test.cjs tests/folders.test.cjs tests/enhance-safety.test.cjs tests/store.test.cjs tests/process.test.cjs tests/downloader.test.cjs tests/platform.test.cjs tests/llama.test.cjs tests/components.test.cjs tests/video-gpu.test.cjs tests/import-fixes.test.cjs tests/i18n.test.cjs tests/library-root.test.cjs tests/theme.test.cjs",
+    "build": "node tools/build-desktop-source.mjs",
+    "start": "electron .",
+    "desktop": "electron .",
+    "desktop:pack": "node tools/build-theme-css.mjs && electron-builder --linux dir --x64",
+    "desktop:appimage": "node tools/build-theme-css.mjs && electron-builder --linux AppImage --x64",
+    "test:desktop": "node --test tests/desktop.test.cjs tests/import.test.cjs tests/qwen.test.cjs tests/enhance.test.cjs tests/reading.test.cjs tests/reading-renderer.test.cjs tests/reference-ui.test.cjs tests/folders.test.cjs tests/enhance-safety.test.cjs tests/store.test.cjs",
+    "test:electron": "node tests/electron.mjs",
+    "test:desktop-live": "node tests/desktop-live.mjs",
+    "test:enhance": "node --test tests/enhance-safety.test.cjs",
+    "desktop:install": "python tools/install-desktop.py",
+    "test:qwen": "node tests/qwen-live.mjs",
+    "enhance:build": "python tools/build-enhance-worker.py",
+    "test:reading": "node --test tests/reading.test.cjs tests/reading-renderer.test.cjs",
+    "test:ui": "node tests/reference-ui.mjs",
+    "test:folders": "node --test tests/folders.test.cjs",
+    "test:folders:ui": "node tests/folders-ui.mjs",
+    "test:models:ui": "node tests/models-ui.mjs",
+    "test:enhance:ui": "node tests/enhance-safety-ui.mjs",
+    "test:ui:unit": "node --test tests/reading.test.cjs tests/reading-renderer.test.cjs tests/reference-ui.test.cjs tests/folders.test.cjs tests/enhance-safety.test.cjs tests/store.test.cjs tests/platform.test.cjs tests/llama.test.cjs tests/components.test.cjs tests/video-gpu.test.cjs tests/import-fixes.test.cjs tests/i18n.test.cjs tests/library-root.test.cjs",
+    "desktop:pack:win": "node tools/build-theme-css.mjs && electron-builder --win nsis portable --x64",
+    "pin:manifest": "python3 tools/pin-manifest.py",
+    "test:ui:en": "node tests/ui-en.mjs",
+    "test:library:ui": "node tests/library-root-ui.mjs",
+    "build:theme": "node tools/build-theme-css.mjs",
+    "test:theme:ui": "node tests/theme-ui.mjs"
+  },
+  "engines": {
+    "node": ">=22"
+  },
+  "type": "commonjs",
+  "devDependencies": {
+    "acorn": "^8.19.0",
+    "electron": "^45.0.0",
+    "electron-builder": "^26.15.3",
+    "playwright": "^1.64.1"
+  },
+  "main": "desktop/main.cjs",
+  "build": {
+    "appId": "local.anime-lingo.desktop",
+    "productName": "Anime Lingo",
+    "directories": {
+      "output": "dist/desktop"
+    },
+    "files": [
+      "desktop/**/*",
+      "!desktop/native/**",
+      "!desktop/shaders/**",
+      "extension/core.js",
+      "extension/data/**/*",
+      "extension/icons/*",
+      "package.json",
+      "LICENSE"
+    ],
+    "linux": {
+      "target": [
+        {
+          "target": "AppImage",
+          "arch": [
+            "x64"
+          ]
+        },
+        {
+          "target": "dir",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "category": "Education",
+      "desktop": {
+        "entry": {
+          "Name": "Anime Lingo",
+          "Comment": "Английский с аниме — локальные субтитры и перевод"
+        }
+      },
+      "icon": "desktop/assets/icon.png",
+      "syncDesktopName": true
+    },
+    "asar": true,
+    "asarUnpack": [
+      "desktop/qwen_worker.py"
+    ],
+    "artifactName": "${productName}-${version}-${os}-${arch}.${ext}",
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        },
+        {
+          "target": "portable",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "icon": "desktop/assets/icon.png"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "deleteAppDataOnUninstall": false,
+      "shortcutName": "Anime Lingo"
+    },
+    "portable": {
+      "artifactName": "${productName}-${version}-portable-${arch}.${ext}"
+    }
+  },
+  "author": "Anime Lingo",
+  "desktopName": "anime-lingo.desktop"
+}
