@@ -1,0 +1,79 @@
+name: windows-smoke
+# Installs the published Windows installer on a real Windows machine and checks the installed app. Reports only.
+on:
+  push:
+    branches: [smoke-windows]
+jobs:
+  smoke:
+    runs-on: windows-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm ci
+      - name: Download the published installer and verify its checksum
+        shell: pwsh
+        run: |
+          $base = "https://github.com/gerolheld/anime-lingo/releases/download/v0.1.0"
+          New-Item -ItemType Directory -Force release | Out-Null
+          foreach ($f in "Anime.Lingo-0.1.0-win-x64.exe","Anime.Lingo-0.1.0-portable-x64.exe","SHA256SUMS.txt") { Invoke-WebRequest "$base/$f" -OutFile "release/$f" }
+          Get-Content release/SHA256SUMS.txt
+          foreach ($line in Get-Content release/SHA256SUMS.txt) {
+            $hash, $name = $line -split '\s+', 2
+            $name = $name.Trim().TrimStart('*')
+            $candidates = @($name, ($name -replace ' ', '.'))
+            foreach ($c in $candidates) { if (Test-Path "release/$c") { $actual = (Get-FileHash "release/$c" -Algorithm SHA256).Hash.ToLower(); "$c expected $hash actual $actual"; if ($actual -ne $hash) { throw "checksum mismatch for $c" } } }
+          }
+      - name: Silent install
+        id: install
+        shell: pwsh
+        run: |
+          $p = Start-Process -FilePath "release/Anime.Lingo-0.1.0-win-x64.exe" -ArgumentList "/S" -Wait -PassThru
+          "installer exit code: $($p.ExitCode)"
+          $exe = Get-ChildItem -Path $env:LOCALAPPDATA, "C:\Program Files", "C:\Program Files (x86)" -Recurse -Filter "Anime Lingo.exe" -ErrorAction SilentlyContinue | Select-Object -First 1
+          if (-not $exe) { throw "installed Anime Lingo.exe not found" }
+          "found: $($exe.FullName)"
+          "exe=$($exe.FullName)" >> $env:GITHUB_OUTPUT
+          $dir = $exe.DirectoryName
+          Get-ChildItem $dir | Select-Object Name, Length | Format-Table | Out-String | Write-Host
+          foreach ($need in "resources\app.asar","resources\app.asar.unpacked\desktop\qwen_worker.py") { if (-not (Test-Path (Join-Path $dir $need))) { throw "missing in install: $need" } else { "ok: $need" } }
+          Get-ItemProperty "HKCU:\Software\Microsoft\Windows\CurrentVersion\Uninstall\*" -ErrorAction SilentlyContinue | Where-Object { $_.DisplayName -like "*Anime*" } | Select-Object DisplayName, DisplayVersion, InstallLocation | Format-List | Out-String | Write-Host
+      - name: Test the installed app
+        id: app
+        shell: pwsh
+        continue-on-error: true
+        env:
+          INSTALLED_EXE: ${{ steps.install.outputs.exe }}
+          REPO: ${{ github.workspace }}
+          OUT: ${{ github.workspace }}/smoke-out
+        run: node tests/smoke/windows-installed.mjs
+      - name: Portable build starts
+        shell: pwsh
+        continue-on-error: true
+        run: |
+          $p = Start-Process -FilePath "release/Anime.Lingo-0.1.0-portable-x64.exe" -PassThru
+          Start-Sleep -Seconds 25
+          $procs = Get-Process | Where-Object { $_.ProcessName -like "Anime*Lingo*" }
+          "running processes: $($procs.Count)"
+          $procs | Select-Object ProcessName, Id, MainWindowTitle | Format-Table | Out-String | Write-Host
+          if ($procs.Count -eq 0) { throw "portable build did not start" }
+          $procs | Stop-Process -Force
+      - name: Uninstall
+        shell: pwsh
+        continue-on-error: true
+        run: |
+          $dir = Split-Path "${{ steps.install.outputs.exe }}"
+          $un = Get-ChildItem $dir -Filter "Uninstall*.exe" | Select-Object -First 1
+          if (-not $un) { throw "uninstaller not found in $dir" }
+          $p = Start-Process -FilePath $un.FullName -ArgumentList "/S" -Wait -PassThru
+          "uninstaller exit code: $($p.ExitCode)"
+          Start-Sleep -Seconds 5
+          "installed exe still there: $(Test-Path '${{ steps.install.outputs.exe }}')"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: windows-smoke-report
+          path: smoke-out
+          if-no-files-found: warn
