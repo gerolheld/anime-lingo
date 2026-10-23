@@ -41,7 +41,7 @@ await step('components status shows the real situation',async()=>{
   const s=await main(()=>global.__lingoTest.backend.componentsStatus().then(s=>({engine:s.translatorEngine,env:s.recognitionEnv.ready,ffmpeg:s.ffmpeg.ready,runtime:s.runtime,caps:s.capabilities.translation.map(o=>o.id+':'+o.available)})));return s;
 });
 await step('install FFmpeg (download, SHA-256, system tar.exe extraction)',async()=>{
-  const r=await main(async()=>{const b=global.__lingoTest.backend;await b.installComponent('ffmpeg');const t=require(require('path').join(process.resourcesPath,'app.asar','desktop','tools.cjs'));return {state:b.components.state.ffmpeg,status:t.status()};});
+  const r=await main(async()=>{const b=global.__lingoTest.backend;await b.installComponent('ffmpeg');const st=await b.componentsStatus();return {state:b.components.state.ffmpeg,status:st.ffmpeg};});
   if(r.state.state!=='ready'||!r.status.ready)throw Error(JSON.stringify(r));return r.status.ffmpeg;
 },900000);
 const clip=join(library,'Test Show','clip.mp4');await mkdir(join(library,'Test Show'),{recursive:true});await copyFile(resolve(REPO,'tests/clip.mp4'),clip);
@@ -59,7 +59,7 @@ await step('drag-and-drop style import of a folder (library folder scan with rea
   if(!r.folders.length)throw Error(JSON.stringify(r));return r;
 });
 await step('"+ Folder" creates a real sub-folder on disk with a Windows-safe name',async()=>{
-  const r=await main(async(_,dir)=>{const f=await global.__lingoTest.backend.saveFolder({name:'Re:Zero / Season 2?'});return {dirName:f.dirName,exists:require('fs').existsSync(require('path').join(dir,f.dirName))};},library);
+  const r=await main(async(_,dir)=>{const f=await global.__lingoTest.backend.saveFolder({name:'Re:Zero / Season 2?'});const fs=process.getBuiltinModule('fs'),path=process.getBuiltinModule('path');return {dirName:f.dirName,exists:fs.existsSync(path.join(dir,f.dirName))};},library);
   if(!r.exists||/[:?/]/.test(r.dirName))throw Error(JSON.stringify(r));return r;
 });
 await step('safe-mode CPU enhancement of the clip with the Windows watchdog (real ffmpeg)',async()=>{
@@ -67,7 +67,7 @@ await step('safe-mode CPU enhancement of the clip with the Windows watchdog (rea
   if(r.state!=='ready'||r.isolation!=='watchdog')throw Error(JSON.stringify(r));return r;
 },600000);
 await step('cancelling an enhancement stops the whole ffmpeg process tree',async()=>{
-  const r=await main(async(_,id)=>{const b=global.__lingoTest.backend;const jobs=await b.enhance([id],{engine:'cpu',preview:false,scale:1});await new Promise(r=>setTimeout(r,2500));b.cancelEnhancements();await b.queue;await new Promise(r=>setTimeout(r,2500));const {execFileSync}=require('child_process');const list=execFileSync('tasklist',['/FI','IMAGENAME eq ffmpeg.exe','/NH']).toString();return {state:b.enhancement(jobs[0].id).state,running:/ffmpeg\.exe/i.test(list)};},episodeId);
+  const r=await main(async(_,id)=>{const b=global.__lingoTest.backend;const jobs=await b.enhance([id],{engine:'cpu',preview:false,scale:1});await new Promise(r=>setTimeout(r,2500));b.cancelEnhancements();await b.queue;await new Promise(r=>setTimeout(r,2500));const {execFileSync}=process.getBuiltinModule('child_process');const list=execFileSync('tasklist',['/FI','IMAGENAME eq ffmpeg.exe','/NH']).toString();return {state:b.enhancement(jobs[0].id).state,running:/ffmpeg\.exe/i.test(list)};},episodeId);
   if(r.running)throw Error('ffmpeg.exe is still running after cancel: '+JSON.stringify(r));return r;
 },300000);
 await step('GPU video modes are locked by default and the encoder probe refuses to run',async()=>{
@@ -76,7 +76,7 @@ await step('GPU video modes are locked by default and the encoder probe refuses 
 });
 await step('language switch to Russian and back, theme change, no renderer crash',async()=>{
   await page.evaluate(()=>call('settings',{uiLanguage:'ru'}));await page.waitForFunction(()=>document.documentElement.lang==='ru',null,{timeout:20000});await page.waitForSelector('#open-media');
-  const ru=await page.locator('.sidebar [data-page=library] span').innerText();await page.screenshot({path:join(OUT,'04-russian.png')});
+  const ru=await page.locator('.sidebar [data-page=library] span:not(.count)').innerText();await page.screenshot({path:join(OUT,'04-russian.png')});
   await page.evaluate(()=>call('settings',{uiLanguage:'en',themePreset:'red'}));await page.waitForFunction(()=>document.documentElement.lang==='en',null,{timeout:20000});await page.waitForSelector('#open-media');await page.waitForTimeout(500);
   const themed=await page.evaluate(()=>document.querySelector('link[data-themed]').media);await page.screenshot({path:join(OUT,'05-red-theme.png')});
   if(ru!=='Библиотека'||themed!=='all')throw Error(JSON.stringify({ru,themed}));return {ru,themed};
@@ -85,13 +85,13 @@ await step('recognition plan on this machine (no GPU): CPU device and a time est
   const r=await main(async(_,id)=>global.__lingoTest.backend.recognitionPlan(id),episodeId);return r;
 });
 await step('install the translation engine (llama.cpp CPU) and start it',async()=>{
-  const r=await main(async()=>{const b=global.__lingoTest.backend;await b.installComponent('translator-engine');const st=await b.componentsStatus();const exe=await b.llama.binaryPath(await b.llama.resolveBackend());const {execFileSync}=require('child_process');const v=execFileSync(exe,['--version'],{timeout:60000}).toString()+'';return {engine:st.translatorEngine,version:v.split('\n')[0]};});
+  const r=await main(async()=>{const b=global.__lingoTest.backend;await b.installComponent('translator-engine');const st=await b.componentsStatus();const exe=await b.llama.binaryPath(await b.llama.resolveBackend());const {execFileSync}=process.getBuiltinModule('child_process');const v=execFileSync(exe,['--version'],{timeout:60000}).toString()+'';return {engine:st.translatorEngine,version:v.split('\n')[0]};});
   if(!r.engine.installed)throw Error(JSON.stringify(r));return r;
 },900000);
 await step('download Hy-MT2 Q4_K_M (4.4 GB, SHA-256 verified) and translate with the embedded llama-server',async()=>{
   const r=await main(async()=>{const b=global.__lingoTest.backend;await b.configure({translationQuant:'Q4_K_M'});const dl=await b.installComponent('translator-model',{quant:'Q4_K_M'});if(dl.state!=='ready')throw Error('download: '+JSON.stringify(dl));
     let pid,out;await b.models.with('translation',async()=>{pid=b.llama.child.pid;out=await b.translateRaw('Nothing changes in this world.','');});
-    await new Promise(r=>setTimeout(r,1500));const {execFileSync}=require('child_process');const alive=execFileSync('tasklist',['/FI','PID eq '+pid,'/NH']).toString().includes(String(pid));return {out,backend:b.llama.status(),pidStillAlive:alive};});
+    await new Promise(r=>setTimeout(r,1500));const {execFileSync}=process.getBuiltinModule('child_process');const alive=execFileSync('tasklist',['/FI','PID eq '+pid,'/NH']).toString().includes(String(pid));return {out,backend:b.llama.status(),pidStillAlive:alive};});
   if(!/[А-Яа-я]/.test(r.out)||r.pidStillAlive)throw Error(JSON.stringify(r));return r;
 },2400000);
 await step('create the Python environment (uv + managed Python 3.12 + PyTorch CPU + qwen-asr)',async()=>{
