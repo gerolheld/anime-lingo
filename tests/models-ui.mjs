@@ -26,7 +26,7 @@ const calls=[],errors=[];let browser;
 const called=async(test,what)=>{for(let i=0;i<50;i++){if(calls.some(test))return;await new Promise(r=>setTimeout(r,40));}assert.fail('IPC call not seen: '+what);};
 try{
  browser=await chromium.launch({executablePath:chromiumPath,headless:true,args:['--disable-gpu','--use-gl=disabled','--disable-features=Vulkan,WebGPU']});
- const context=await browser.newContext({viewport:{width:1672,height:941}});await context.route('**/*',r=>r.request().url().startsWith(base)?r.continue():r.abort());
+ const context=await browser.newContext({locale:'ru-RU',viewport:{width:1672,height:941}});await context.route('**/*',r=>r.request().url().startsWith(base)?r.continue():r.abort());
  await context.exposeBinding('__ipc',async(_,method,data={})=>{calls.push({method,data});return {value:method==='install-component'?{state:'ready'}:method==='snapshot'?globalThis.__snapshot:method==='video-gpu-status'?globalThis.__video:method==='components-status'?globalThis.__status:method==='settings'?{...globalThis.__settings,...data}:{ok:true}};});
  await context.exposeFunction('__setStatus',s=>{globalThis.__status=s;});
  globalThis.__status=status();globalThis.__snapshot={settings:{uiLanguage:LANG,firstRunDone:true,fontSize:36,ruSize:24,bottom:12,opacity:55,offset:0,readingMode:true,readingSize:5,subtitleStyle:'modern'},episodes:[],folders:[],words:[],history:[],enhancements:[],components:{},tools:{ready:true},modelState:{phase:'idle',label:'x'},enhancePolicy:{isolation:{label:'x'}},live:[]};globalThis.__settings={uiLanguage:LANG,firstRunDone:true,qwenDevice:'auto',translationDevice:'auto',translationQuant:'auto',gpu:true,fontSize:36,ruSize:24,bottom:12,opacity:55,offset:0,readingMode:true,readingSize:5,subtitleStyle:'modern'};

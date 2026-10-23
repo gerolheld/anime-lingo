@@ -28,7 +28,7 @@ const fixture={settings:{...DEFAULTS,readingVersion:1,uiLanguage:LANG},episodes,
 const args=['--disable-gpu','--use-gl=disabled','--disable-gpu-compositing','--disable-software-rasterizer','--disable-accelerated-video-decode','--disable-accelerated-video-encode','--disable-features=Vulkan,WebGPU'];
 const checks=[],errors=[];let browser;
 try{
- browser=await chromium.launch({executablePath:chromiumPath,headless:true,args});const context=await browser.newContext({viewport:{width:1672,height:941},deviceScaleFactor:1});
+ browser=await chromium.launch({executablePath:chromiumPath,headless:true,args});const context=await browser.newContext({locale:'ru-RU',viewport:{width:1672,height:941},deviceScaleFactor:1});
  await context.route('**/*',r=>r.request().url().startsWith(base)?r.continue():r.abort());
  await context.addInitScript(lang=>{try{localStorage.setItem('lingo-lang',lang);}catch{}},LANG);
  await context.addInitScript(f=>{

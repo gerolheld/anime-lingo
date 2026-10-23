@@ -14,7 +14,7 @@ let current=state();const calls=[];
 const called=async(test,what)=>{for(let i=0;i<50;i++){if(calls.some(test))return;await new Promise(r=>setTimeout(r,40));}assert.fail('IPC call not seen: '+what);};
 const browser=await chromium.launch({executablePath:chromiumPath,headless:true,args:['--disable-gpu','--use-gl=disabled']});
 try{
- const context=await browser.newContext({viewport:{width:1672,height:941}});await context.route('**/*',r=>r.request().url().startsWith(base)?r.continue():r.abort());
+ const context=await browser.newContext({locale:'ru-RU',viewport:{width:1672,height:941}});await context.route('**/*',r=>r.request().url().startsWith(base)?r.continue():r.abort());
  await context.exposeBinding('__ipc',async(_,method,data={})=>{calls.push({method,data});return {value:method==='snapshot'?current:method==='pick-library-root'?'/media/anime':{added:0,folders:0}};});
  await context.addInitScript(lang=>{try{localStorage.setItem('lingo-lang',lang);}catch{}let l;window.__emit=d=>l?.({type:'state',data:d});window.lingo={subscribe:fn=>{l=fn;},call:(m,d)=>window.__ipc(m,d)};},LANG);
  const page=await context.newPage();const errors=[];page.on('pageerror',e=>errors.push(e.stack));
